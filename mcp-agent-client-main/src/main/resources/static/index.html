@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Employee Dashboard</title>
+    <!-- Modern typography from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #020617 100%);
+            --panel-bg: rgba(30, 41, 59, 0.45);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #818cf8;
+            --accent-secondary: #c084fc;
+            --accent-glow: rgba(129, 140, 248, 0.15);
+            --success: #34d399;
+            --danger: #f87171;
+            --chat-user-bg: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --chat-agent-bg: rgba(51, 65, 85, 0.5);
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Outfit', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--panel-border);
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .logo-section h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-section p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+        }
+
+        .status-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-border);
+            padding: 0.4rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.active {
+            background-color: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .status-dot.inactive {
+            background-color: var(--danger);
+            box-shadow: 0 0 8px var(--danger);
+        }
+
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 1.5rem;
+            padding: 1.5rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            height: calc(100vh - 80px);
+        }
+
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow-y: auto;
+            }
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Left Side: Agent Chat */
+        .chat-card {
+            height: 100%;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--chat-user-bg);
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+        }
+
+        .message.agent {
+            align-self: flex-start;
+            background: var(--chat-agent-bg);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .message.system {
+            align-self: center;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-top: 1px solid var(--panel-border);
+            background: rgba(15, 23, 42, 0.2);
+        }
+
+        .suggestion-tag {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--panel-border);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-tag:hover {
+            background: rgba(129, 140, 248, 0.1);
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .chat-input-container {
+            padding: 1rem 1.5rem;
+            background: rgba(15, 23, 42, 0.4);
+            border-top: 1px solid var(--panel-border);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            padding: 0.8rem 1.2rem;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .send-btn {
+            background: var(--chat-user-bg);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+        }
+
+        .send-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .send-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Right Side: Employee Directory */
+        .directory-card {
+            height: 100%;
+        }
+
+        .directory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .refresh-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-border);
+            color: var(--text-primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--text-secondary);
+        }
+
+        .table-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.3);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--panel-border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .emp-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-dev { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .badge-mgr { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .badge-hr { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+        .badge-generic { background: rgba(100, 116, 139, 0.15); color: #cbd5e1; }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--text-secondary);
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        .tools-list-container {
+            padding: 1rem 1.5rem;
+            background: rgba(15, 23, 42, 0.2);
+            border-top: 1px solid var(--panel-border);
+        }
+
+        .tools-list-container h3 {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .tools-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .tool-pill {
+            background: rgba(129, 140, 248, 0.08);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            color: #a5b4fc;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-section">
+            <h1> MCP Agent</h1>
+            <p>Spring Boot & Spring AI Pair-Programming Platform</p>
+        </div>
+        <div class="status-container">
+            <div class="status-badge">
+                <span class="status-dot active" id="llm-status"></span>
+                <span>Ollama (Qwen 2.5)</span>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot inactive" id="mcp-status"></span>
+                <span id="mcp-status-text">MCP: Scanning...</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Chat Area -->
+        <section class="card chat-card">
+            <div class="card-header">
+                <h2>Chat AI Agent</h2>
+                <div class="status-badge" style="border:none; background:transparent;" id="typing-indicator">
+                    <!-- Typing Indicator -->
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chat-box">
+                <div class="message agent">Hello! I am your agentic assistant. I am connected to the Employee Management MCP server. You can ask me to:
+- List all employees
+- Add a new employee
+- Update an employee's details (e.g. role or department)
+- Delete an employee by ID
+
+What would you like to do?</div>
+            </div>
+
+            <div class="suggestions">
+                <div class="suggestion-tag" onclick="useSuggestion('List all employees')">📋 List all employees</div>
+                <div class="suggestion-tag" onclick="useSuggestion('Create employee Alice Smith (alice@example.com) as Developer in Engineering')">➕ Create Alice Smith</div>
+                <div class="suggestion-tag" onclick="useSuggestion('Change ID <replace> department to Marketing')">✏️ Move Employee Id to Marketing</div>
+                <div class="suggestion-tag" onclick="useSuggestion('Delete employee with ID <replace>')">❌ Delete Employee</div>
+            </div>
+
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="message-input" placeholder="Type a message to manage employees..." onkeydown="handleKeyDown(event)">
+                <button class="send-btn" id="send-button" onclick="sendMessage()">Send</button>
+            </div>
+        </section>
+
+        <!-- Directory Area -->
+        <section class="card directory-card">
+            <div class="card-header directory-header">
+                <h2>Employee Directory (Port 8081 Data)</h2>
+                <button class="refresh-btn" onclick="fetchEmployees()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    Refresh
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table id="employee-table">
+                    <thead>
+                        <tr>
+                            <th>ID (Truncated)</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employee-list">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+                <div class="empty-state" id="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <p>No employees in the directory.</p>
+                    <p style="font-size: 0.75rem; margin-top: 0.5rem;">Use the chat to create some or click Refresh.</p>
+                </div>
+            </div>
+
+            <!-- Active MCP Tools Discovered -->
+            <div class="tools-list-container">
+                <h3>Active MCP Tools Discovered</h3>
+                <div class="tools-grid" id="tools-grid">
+                    <span class="tool-pill">Loading tools...</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const CLIENT_API = '/api';
+        const SERVER_API = 'http://localhost:8081/api';
+
+        // Initial setup
+        window.onload = function() {
+            fetchStatus();
+            fetchEmployees();
+        };
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function useSuggestion(text) {
+            const input = document.getElementById('message-input');
+            if (text.includes('<replace>')) {
+                // Find first employee ID if any
+                const rows = document.querySelectorAll('#employee-list tr');
+                if (rows.length > 0 && rows[0].dataset.id) {
+                    text = text.replace('<replace>', rows[0].dataset.id);
+                } else {
+                    text = text.replace('<replace>', '123-abc');
+                }
+            }
+            input.value = text;
+            input.focus();
+        }
+
+        async function fetchStatus() {
+            try {
+                const response = await fetch(`${CLIENT_API}/status`);
+                if (response.ok) {
+                    const status = await response.json();
+                    
+                    const mcpDot = document.getElementById('mcp-status');
+                    const mcpText = document.getElementById('mcp-status-text');
+                    const toolsGrid = document.getElementById('tools-grid');
+                    
+                    if (status.mcpServerConnected) {
+                        mcpDot.className = 'status-dot active';
+                        mcpText.textContent = `MCP Server Connected (${status.discoveredToolsCount} tools)`;
+                        
+                        toolsGrid.innerHTML = '';
+                        status.tools.forEach(tool => {
+                            const pill = document.createElement('span');
+                            pill.className = 'tool-pill';
+                            pill.textContent = tool.name;
+                            pill.title = tool.description;
+                            toolsGrid.appendChild(pill);
+                        });
+                    } else {
+                        mcpDot.className = 'status-dot inactive';
+                        mcpText.textContent = 'MCP Server Offline';
+                        toolsGrid.innerHTML = '<span class="tool-pill" style="color:var(--danger); border-color:var(--danger); background:none;">No tools discovered</span>';
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch client/mcp status", err);
+                document.getElementById('mcp-status').className = 'status-dot inactive';
+                document.getElementById('mcp-status-text').textContent = 'MCP Client Error';
+            }
+        }
+
+        async function fetchEmployees() {
+            const listElement = document.getElementById('employee-list');
+            const emptyState = document.getElementById('empty-state');
+            const table = document.getElementById('employee-table');
+            
+            try {
+                const response = await fetch(`${SERVER_API}/employees`);
+                if (response.ok) {
+                    const employees = await response.json();
+                    
+                    if (employees.length === 0) {
+                        listElement.innerHTML = '';
+                        emptyState.style.display = 'flex';
+                        table.style.display = 'none';
+                        return;
+                    }
+                    
+                    emptyState.style.display = 'none';
+                    table.style.display = 'table';
+                    
+                    listElement.innerHTML = employees.map(emp => {
+                        let badgeClass = 'badge-generic';
+                        const roleLower = emp.role ? emp.role.toLowerCase() : '';
+                        if (roleLower.includes('developer') || roleLower.includes('engineer') || roleLower.includes('programmer')) {
+                            badgeClass = 'badge-dev';
+                        } else if (roleLower.includes('manager') || roleLower.includes('lead') || roleLower.includes('director')) {
+                            badgeClass = 'badge-mgr';
+                        } else if (roleLower.includes('hr') || roleLower.includes('recruiter') || roleLower.includes('human')) {
+                            badgeClass = 'badge-hr';
+                        }
+                        
+                        const truncId = emp.id.length > 8 ? emp.id.substring(0, 8) + '...' : emp.id;
+                        
+                        return `
+                            <tr data-id="${emp.id}">
+                                <td style="font-family: monospace; color: var(--accent-primary);" title="${emp.id}">${truncId}</td>
+                                <td style="font-weight: 500;">${emp.name}</td>
+                                <td>${emp.email}</td>
+                                <td><span class="emp-badge ${badgeClass}">${emp.role}</span></td>
+                                <td>${emp.department}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                console.error("Failed to load employees list", err);
+                listElement.innerHTML = `<tr><td colspan="5" style="color:var(--danger); text-align:center; padding: 2rem;">Error connecting to port 8081 data API. Ensure MCP Employee Server is running.</td></tr>`;
+                emptyState.style.display = 'none';
+                table.style.display = 'table';
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            // Append User message
+            appendMessage(text, 'user');
+            input.value = '';
+            
+            // Disable inputs
+            input.disabled = true;
+            document.getElementById('send-button').disabled = true;
+            
+            const typingIndicator = document.getElementById('typing-indicator');
+            typingIndicator.innerHTML = '<span style="color: var(--accent-primary); font-size: 0.75rem;">Agent is thinking...</span>';
+            
+            try {
+                const response = await fetch(`${CLIENT_API}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    appendMessage(data.response, 'agent');
+                } else {
+                    appendMessage("Error: Failed to communicate with the client server.", 'agent');
+                }
+            } catch (err) {
+                console.error("Chat communication error", err);
+                appendMessage("Error: Network failure. Please ensure the Client project is running.", 'agent');
+            } finally {
+                input.disabled = false;
+                document.getElementById('send-button').disabled = false;
+                typingIndicator.innerHTML = '';
+                input.focus();
+                
+                // Refresh status and list after a message, as database records may have changed
+                fetchEmployees();
+                fetchStatus();
+            }
+        }
+
+        function appendMessage(text, sender) {
+            const chatBox = document.getElementById('chat-box');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.textContent = text;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Run client on port 8080
+server.port=8080
+spring.application.name=mcp-agent-client
+
+# Configure the local Ollama LLM provider
+spring.ai.ollama.chat.options.model=qwen2.5:0.5b
+spring.ai.ollama.chat.options.temperature=0.1
+
+# Configure connection to the remote MCP servers (Streamable-HTTP transport)
+# IMPORTANT: For Streamable-HTTP provide the base URL (and optionally an endpoint).
+# The Streamable-HTTP transport expects a URL and an optional endpoint property.
+spring.ai.mcp.client.enabled=true
+#spring.ai.mcp.client.streamable-http.connections.employee-server.url=http://localhost:8081
+#spring.ai.mcp.client.streamable-http.connections.youtube-mcp.url=http://localhost:8082
+spring.ai.mcp.client.sse.connections.employee-server.url=http://localhost:8081
+#spring.ai.mcp.client.sse.connections.youtube-mcp.url=http://localhost:8082
+
+# If your MCP exposes a specific event path, set endpoint (optional):
+# spring.ai.mcp.client.streamable-http.connections.employee-server.endpoint=/sse
+# spring.ai.mcp.client.streamable-http.connections.youtube-mcp.endpoint=/sse
+
+# Configure Google Gemini credentials (if you uncomment the Google starter in pom.xml)
+# spring.ai.google.genai.api-key=YOUR_API_KEY_HERE
+# spring.ai.google.genai.chat.options.model=gemini-2.5-flash
+
+# Logging levels for troubleshooting
+logging.level.org.springframework.ai.mcp=DEBUG
+logging.level.org.springframework.ai=INFO

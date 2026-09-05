@@ -1,0 +1,55 @@
+[ {
+  "id" : "6f42ae00-24bb-49f1-9684-c06cb00ae423",
+  "name" : "Tom Keneth",
+  "email" : "tomk@example.com",
+  "role" : "Developer",
+  "department" : "Engineering"
+}, {
+  "id" : "13d2a161-eb10-4e0f-a9ce-50c2161e3deb",
+  "name" : "Sam Smith",
+  "email" : "sam@example.com",
+  "role" : "Developer",
+  "department" : "Engineering"
+}, {
+  "id" : "82570342-fe2c-40f1-bfe3-60c10b6c6c3a",
+  "name" : "John Doe",
+  "email" : "example@example.com",
+  "role" : "Software Engineer",
+  "department" : "AI"
+}, {
+  "id" : "a01ab1bb-ea50-419d-a3ca-83cae026680f",
+  "name" : "Taosss",
+  "email" : "tcss@example.com",
+  "role" : "Developer",
+  "department" : "Engineering"
+}, {
+  "id" : "4090a220-3127-4ecc-8202-7379bbd9d94f",
+  "name" : "Alice Tong",
+  "email" : "alicetong@example.com",
+  "role" : "Developer",
+  "department" : "Engineering"
+}, {
+  "id" : "6092f97d-b10a-4585-93a4-fcfa19f50b80",
+  "name" : "Mark Samuel",
+  "email" : "MarkS@example.com",
+  "role" : "Designer",
+  "department" : "Operations"
+}, {
+  "id" : "5af9c2e7-9fee-4e5f-9f35-90ab7277fed5",
+  "name" : "John Smith",
+  "email" : "alice@example.com",
+  "role" : "Designer",
+  "department" : "Software"
+}, {
+  "id" : "1a267828-5d9e-4f91-b69c-22e2c0123206",
+  "name" : "Prathap Ram",
+  "email" : "alice@example.com",
+  "role" : "Developer",
+  "department" : "IT"
+}, {
+  "id" : "60cc2a8c-2c26-474e-967c-fd6588c3d7f0",
+  "name" : "Stephen",
+  "email" : "stephen@example.com",
+  "role" : "Product manager",
+  "department" : "IT"
+} ]
